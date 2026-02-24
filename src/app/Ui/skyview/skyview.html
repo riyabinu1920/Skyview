@@ -1,0 +1,48 @@
+<div class="skyview-wrapper">
+  <div class="skyview-hero">
+    <div class="container text-center">
+      <h1 class="hero-title">SkyView</h1>
+      <p class="hero-subtitle">Explore the universe through NASA's Astronomy Picture of the Day</p>
+      <div class="tab-row">
+        <button class="tab-btn" [class.active]="activeTab === 'gallery'" (click)="fetchGallery()">Random Gallery</button>
+        <button class="tab-btn" [class.active]="activeTab === 'today'" (click)="fetchToday()">Today's Picture</button>
+      </div>
+      <div class="date-search mt-3">
+        <input type="date" class="date-input" [(ngModel)]="searchDate" [max]="'2025-08-01'">
+        <button class="search-btn" (click)="fetchByDate()">Search Date</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-light" role="status"></div>
+      <p class="mt-3 text-light">Loading from NASA...</p>
+    </div>
+
+    <div *ngIf="error && !loading" class="alert alert-danger text-center">{{ error }}</div>
+
+    <ng-container *ngIf="!loading && !error">
+      <div *ngIf="selected" class="selected-card">
+        <button class="close-btn" (click)="closeCard()">✕ Close</button>
+        <img [src]="selected.hdurl || selected.url" [alt]="selected.title" class="selected-img">
+        <div class="selected-body">
+          <h2 class="selected-title">{{ selected.title }}</h2>
+          <p class="selected-date">{{ formatDate(selected.date) }}</p>
+          <p class="selected-copyright" *ngIf="selected.copyright">© {{ selected.copyright }}</p>
+          <p class="selected-explanation">{{ selected.explanation }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="apodList.length > 0 && !selected" class="apod-grid">
+        <div class="apod-card" *ngFor="let item of apodList" (click)="openCard(item)">
+          <img [src]="item.url" [alt]="item.title" class="apod-img" loading="lazy">
+          <div class="apod-body">
+            <p class="apod-date">{{ formatDate(item.date) }}</p>
+            <h6 class="apod-title">{{ item.title }}</h6>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
